@@ -438,6 +438,76 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Helper function to generate shareable text for an activity
+  function generateShareText(activityName, activityDetails) {
+    const schedule = formatSchedule(activityDetails);
+    return `Check out "${activityName}" at Mergington High School! ${activityDetails.description} Schedule: ${schedule}`;
+  }
+
+  // Helper function to generate shareable URL
+  function getShareUrl() {
+    // Use the current page URL
+    return window.location.href;
+  }
+
+  // Native share API (modern browsers)
+  async function shareActivity(activityName, activityDetails) {
+    const shareText = generateShareText(activityName, activityDetails);
+    const shareUrl = getShareUrl();
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${activityName} - Mergington High School`,
+          text: shareText,
+          url: shareUrl
+        });
+        showMessage("Activity shared successfully!", "success");
+      } catch (error) {
+        // User cancelled or error occurred
+        if (error.name !== "AbortError") {
+          console.error("Error sharing:", error);
+          showMessage("Unable to share. Try another option.", "info");
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        const textToCopy = `${shareText} ${shareUrl}`;
+        await navigator.clipboard.writeText(textToCopy);
+        showMessage("Activity details copied to clipboard!", "success");
+      } catch (error) {
+        console.error("Error copying to clipboard:", error);
+        showMessage("Your browser doesn't support sharing. Try the social buttons below.", "info");
+      }
+    }
+  }
+
+  // Share on Twitter
+  function shareOnTwitter(activityName, activityDetails) {
+    const shareText = generateShareText(activityName, activityDetails);
+    const shareUrl = getShareUrl();
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    window.open(twitterUrl, "_blank", "width=550,height=420");
+  }
+
+  // Share on Facebook
+  function shareOnFacebook(activityName, activityDetails) {
+    const shareUrl = getShareUrl();
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    window.open(facebookUrl, "_blank", "width=550,height=420");
+  }
+
+  // Share via Email
+  function shareViaEmail(activityName, activityDetails) {
+    const shareText = generateShareText(activityName, activityDetails);
+    const shareUrl = getShareUrl();
+    const subject = `Check out ${activityName} at Mergington High School`;
+    const body = `${shareText}\n\nLearn more: ${shareUrl}`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  }
+
   // Function to display filtered activities
   function displayFilteredActivities() {
     // Clear the activities list
@@ -581,6 +651,20 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="share-buttons">
+        <button class="share-button share-native" data-activity="${name}" title="Share this activity">
+          📤 Share
+        </button>
+        <button class="share-button share-twitter" data-activity="${name}" title="Share on Twitter">
+          𝕏
+        </button>
+        <button class="share-button share-facebook" data-activity="${name}" title="Share on Facebook">
+          f
+        </button>
+        <button class="share-button share-email" data-activity="${name}" title="Share via Email">
+          ✉
+        </button>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -615,6 +699,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const activityName = button.dataset.activity;
+        const activityDetails = allActivities[activityName];
+        
+        if (button.classList.contains("share-native")) {
+          shareActivity(activityName, activityDetails);
+        } else if (button.classList.contains("share-twitter")) {
+          shareOnTwitter(activityName, activityDetails);
+        } else if (button.classList.contains("share-facebook")) {
+          shareOnFacebook(activityName, activityDetails);
+        } else if (button.classList.contains("share-email")) {
+          shareViaEmail(activityName, activityDetails);
+        }
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }

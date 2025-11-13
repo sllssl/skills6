@@ -301,6 +301,77 @@ section h3 {
   align-items: center;
 }
 
+/* Share buttons */
+.share-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+}
+
+.share-button {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--surface);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.share-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.share-native {
+  background-color: var(--primary-light);
+  color: white;
+  border-color: var(--primary);
+}
+
+.share-native:hover {
+  background-color: var(--primary);
+}
+
+.share-twitter {
+  background-color: #000000;
+  color: white;
+  border-color: #000000;
+}
+
+.share-twitter:hover {
+  background-color: #333333;
+}
+
+.share-facebook {
+  background-color: #1877f2;
+  color: white;
+  border-color: #1877f2;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
+}
+
+.share-facebook:hover {
+  background-color: #145dbf;
+}
+
+.share-email {
+  background-color: #34a853;
+  color: white;
+  border-color: #34a853;
+}
+
+.share-email:hover {
+  background-color: #2d8e47;
+}
+
 /* Buttons */
 .register-button {
   background: linear-gradient(145deg, var(--secondary), var(--secondary-dark));
